@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบทดสอบ · ระยะทาง เวลา และความต่างเฟส · ฟิสิกส์ของคลื่น ม.5</title>
+<meta name="theme-color" content="#0B1F3A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#0B1F3A;--ocean:#123A63;--wave:#1E6091;--crest:#3BA3C7;--foam:#7FD8E8;
+    --sun:#F4B740;--coral:#E8654A;--paper:#F3F7FA;--mist:#D4E4EE;--ok:#12B886;--bad:#E8654A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{min-height:100%;font-family:'Sarabun',sans-serif;
+    background:radial-gradient(130% 100% at 50% 0%,#12335c 0%,#0B1F3A 60%,#071429 100%);
+    background-attachment:fixed;color:#2c4257;}
+  .wrap{max-width:840px;margin:0 auto;padding:22px 16px 60px;}
+  .home{display:inline-block;font-family:'Kanit';font-size:13px;color:var(--foam);text-decoration:none;opacity:.85;margin-bottom:8px;}
+
+  header{text-align:center;color:#fff;margin-bottom:20px;}
+  header .badge{display:inline-block;font-family:'Kanit';font-weight:600;letter-spacing:.12em;
+    font-size:11px;color:var(--foam);border:1.5px solid rgba(127,216,232,.5);padding:5px 16px;
+    border-radius:30px;margin-bottom:12px;background:rgba(7,20,40,.3);}
+  header h1{font-family:'Prompt';font-weight:800;font-size:clamp(23px,5.6vw,30px);line-height:1.18;}
+  header .accent{background:linear-gradient(90deg,var(--sun),var(--foam));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  header p{font-family:'Kanit';color:var(--mist);font-size:14px;margin-top:7px;font-weight:400;}
+
+  .panel{background:#fff;border-radius:18px;padding:26px 22px;box-shadow:0 20px 50px rgba(0,0,0,.35);}
+
+  /* ---------- ลงทะเบียน ---------- */
+  .form-title{font-family:'Prompt';font-weight:700;color:var(--deep);font-size:21px;margin-bottom:5px;}
+  .form-sub{font-family:'Kanit';color:#6b8196;font-size:14px;margin-bottom:20px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-family:'Kanit';font-weight:600;color:var(--ocean);font-size:15px;margin-bottom:6px;}
+  .field label .req{color:var(--coral);}
+  .field input{width:100%;font-family:'Sarabun';font-size:17px;padding:13px 15px;
+    border:2px solid var(--mist);border-radius:12px;background:var(--paper);color:var(--deep);outline:none;transition:.18s;}
+  .field input:focus{border-color:var(--crest);background:#fff;}
+  .field.err input{border-color:var(--bad);background:rgba(232,101,74,.06);}
+  .field .msg{font-family:'Kanit';font-size:13px;color:var(--bad);margin-top:5px;display:none;}
+  .field.err .msg{display:block;}
+
+  .rules{background:var(--paper);border-radius:12px;padding:14px 16px;margin:18px 0;border-left:4px solid var(--sun);}
+  .rules h4{font-family:'Kanit';font-weight:600;color:var(--ocean);font-size:14px;margin-bottom:7px;}
+  .rules ul{margin-left:18px;font-size:14px;color:#5a7085;line-height:1.7;}
+
+  .btn{font-family:'Kanit';font-weight:600;font-size:18px;padding:15px 26px;border-radius:30px;border:none;
+    cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;}
+  .btn-primary{background:linear-gradient(120deg,var(--wave),var(--crest));color:#fff;box-shadow:0 8px 20px rgba(30,96,145,.35);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(30,96,145,.45);}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+  .btn-sun{background:var(--sun);color:#3a2a00;}
+
+  /* ---------- แถบบน ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+    padding-bottom:13px;border-bottom:1.5px solid var(--mist);gap:10px;}
+  .who{font-family:'Kanit';font-size:13px;color:#6b8196;line-height:1.35;}
+  .who b{color:var(--deep);}
+  .qcount{font-family:'Prompt';font-weight:700;color:var(--wave);font-size:15px;white-space:nowrap;}
+  .prog{display:flex;gap:3px;margin-bottom:16px;}
+  .pdot{flex:1;height:6px;border-radius:3px;background:var(--mist);transition:.3s;}
+  .pdot.answered{background:var(--ok);}
+  .pdot.cur{background:var(--sun);}
+
+  /* ---------- ตัวนับถอยหลัง 3 ระดับ ---------- */
+  .timer{display:flex;align-items:center;gap:13px;background:var(--paper);border-radius:14px;
+    padding:11px 15px;margin-bottom:18px;border:2px solid var(--mist);transition:.25s;}
+  .timer.warn{border-color:var(--sun);background:rgba(244,183,64,.10);}
+  .timer.danger{border-color:var(--coral);background:rgba(232,101,74,.10);animation:pulse .9s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+  .timer-ring{position:relative;width:46px;height:46px;flex:none;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .tr-bg{fill:none;stroke:var(--mist);stroke-width:4;}
+  .tr-fg{fill:none;stroke:var(--crest);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .25s;}
+  .timer.warn .tr-fg{stroke:var(--sun);}
+  .timer.danger .tr-fg{stroke:var(--coral);}
+  .timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'Prompt';font-weight:700;font-size:17px;color:var(--deep);}
+  .timer.warn .timer-num{color:#8a6400;}
+  .timer.danger .timer-num{color:var(--coral);}
+  .timer-txt{display:flex;flex-direction:column;min-width:0;}
+  .timer-label{font-family:'Kanit';font-weight:600;color:var(--ocean);font-size:14px;}
+  .timer.warn .timer-label{color:#8a6400;}
+  .timer.danger .timer-label{color:var(--coral);}
+  .timer-sub{font-family:'Kanit';color:#8299ac;font-size:11.5px;}
+  .sound-btn{margin-left:auto;flex:none;background:#fff;border:2px solid var(--mist);
+    border-radius:20px;padding:6px 12px;font-family:'Kanit';font-size:12px;color:var(--ocean);cursor:pointer;transition:.2s;}
+  .sound-btn.off{opacity:.5;}
+
+  /* ---------- คำเตือนสลับหน้าจอ ---------- */
+  .guard-warn{display:none;background:rgba(232,101,74,.1);border:2px solid var(--coral);border-radius:12px;
+    padding:10px 14px;margin-bottom:14px;font-family:'Kanit';font-size:14px;color:#a03418;line-height:1.5;}
+  .guard-warn.show{display:block;animation:fade .3s ease;}
+
+  /* ---------- คำถาม ---------- */
+  .q-num{font-family:'Kanit';font-weight:600;color:var(--coral);font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .tag-calc{background:var(--sun);color:#3a2a00;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;}
+  .q-text{font-family:'Prompt';font-weight:600;color:var(--deep);font-size:clamp(17px,4.4vw,20px);line-height:1.45;margin:8px 0 15px;}
+  .q-fig{background:#0B1F3A;border-radius:12px;padding:13px;margin-bottom:15px;text-align:center;}
+  .q-fig svg{max-width:100%;height:auto;}
+  .q-fig .cap{font-family:'Kanit';font-size:12px;color:var(--foam);margin-top:6px;}
+
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{display:flex;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--mist);
+    border-radius:13px;padding:13px 14px;cursor:pointer;transition:.15s;font-size:16.5px;color:#2c4257;}
+  .opt:hover{border-color:var(--crest);transform:translateX(3px);}
+  .opt.sel{border-color:var(--wave);background:rgba(30,96,145,.09);}
+  .opt .k{font-family:'Prompt';font-weight:700;color:var(--wave);background:#fff;border:2px solid var(--mist);
+    width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;font-size:17px;}
+  .opt.sel .k{background:var(--wave);color:#fff;border-color:var(--wave);}
+  .nav{margin-top:22px;}
+
+  /* ---------- ผลลัพธ์ ---------- */
+  .result{text-align:center;padding:10px 0;}
+  .result .of{font-family:'Kanit';color:#6b8196;font-size:15px;}
+  .result .big{font-family:'Prompt';font-weight:800;font-size:46px;line-height:1;margin:4px 0;
+    background:linear-gradient(120deg,var(--wave),var(--crest),var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .result .msg{font-family:'Prompt';font-weight:700;color:var(--deep);font-size:25px;margin:6px 0;}
+  .result .sm{font-family:'Kanit';color:#5a7085;font-size:15px;}
+  .breakdown{display:flex;gap:10px;margin:18px 0;}
+  .bd{flex:1;background:var(--paper);border-radius:12px;padding:12px;}
+  .bd .n{font-family:'Prompt';font-weight:700;font-size:21px;color:var(--wave);}
+  .bd .l{font-family:'Kanit';font-size:12px;color:#6b8196;margin-top:2px;}
+  .auto-note{font-family:'Kanit';font-size:14px;color:#a03418;background:rgba(232,101,74,.1);border-radius:10px;padding:8px 12px;margin-top:10px;display:none;}
+  .save-status{font-family:'Kanit';font-size:15px;padding:12px 16px;border-radius:12px;margin-top:16px;
+    display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+  .save-status.saving{background:rgba(244,183,64,.14);color:#8a6400;}
+  .save-status.saved{background:rgba(18,184,134,.12);color:#0a7a54;}
+  .save-status.failed{background:rgba(232,101,74,.12);color:#a03418;flex-direction:column;}
+
+  /* ---------- เฉลยรายข้อ ---------- */
+  .rev-btn{font-family:'Kanit';font-weight:600;font-size:15px;color:var(--wave);background:#fff;border:2px solid var(--mist);
+    border-radius:12px;padding:11px 18px;cursor:pointer;margin-top:18px;width:100%;transition:.18s;}
+  .rev-btn:hover{border-color:var(--crest);background:var(--paper);}
+  .rev-box{margin-top:16px;text-align:left;display:none;}
+  .rev-box.show{display:block;}
+  .rev-title{font-family:'Prompt';font-weight:700;color:var(--deep);font-size:17px;margin-bottom:12px;}
+  .rev-item{background:var(--paper);border-radius:12px;padding:14px 16px;margin-bottom:11px;border:1px solid var(--mist);}
+  .rev-item .rq{font-family:'Prompt';font-weight:600;color:var(--deep);font-size:15px;line-height:1.45;margin-bottom:7px;}
+  .rev-item .ra{font-size:14.5px;line-height:1.55;margin-bottom:4px;}
+  .rev-item .re{font-family:'Kanit';font-size:13.5px;color:#5a7085;line-height:1.55;background:#fff;
+    border-left:3px solid var(--sun);border-radius:6px;padding:8px 11px;margin-top:6px;}
+  .rev-item .q-fig{margin:6px 0 8px;padding:8px;}
+  .tag{font-family:'Kanit';font-weight:600;font-size:12px;padding:2px 10px;border-radius:99px;margin-right:6px;}
+  .tag.good{background:rgba(18,184,134,.14);color:#0a7a54;}
+  .tag.bad{background:rgba(232,101,74,.14);color:#a03418;}
+  .tag.none{background:var(--mist);color:#6b8196;}
+  .spinner{width:18px;height:18px;border:3px solid rgba(0,0,0,.15);border-top-color:currentColor;border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .step{display:none;}.step.active{display:block;animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .footnote{text-align:center;color:var(--mist);font-family:'Kanit';font-size:12px;margin-top:16px;}
+  .no-select{-webkit-user-select:none;user-select:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="home" href="../">⌂ หน้ารวมบทเรียน</a>
+  <header>
+    <span class="badge">ฟิสิกส์ของคลื่น ม.5 · บทที่ 9 คลื่น · แบบทดสอบ</span>
+    <h1>ระยะทาง เวลา<br><span class="accent">และความต่างเฟส</span></h1>
+    <p>สุ่ม 10 ข้อ จากคลัง <span id="bankN">26</span> ข้อ · หัวข้อ 9.2.2 · รหัสชุด: wave-phase</p>
+  </header>
+
+  <!-- STEP 1 ยืนยันตัวตน -->
+  <div class="step active" id="step-info">
+    <div class="panel">
+      <div class="form-title">ยืนยันตัวตนก่อนทำแบบทดสอบ</div>
+      <div class="form-sub">พิมพ์เลขประจำตัวนักเรียน 5 หลัก แล้วกดค้นหาเพื่อดึงข้อมูล</div>
+      <div class="field" id="f-sid">
+        <label>เลขประจำตัวนักเรียน (5 หลัก) <span class="req">*</span></label>
+        <input type="text" id="in-sid" inputmode="numeric" maxlength="5" placeholder="เช่น 06755">
+        <div class="msg">กรุณากรอกเลขประจำตัว 5 หลัก</div>
+      </div>
+      <button class="btn btn-primary" id="btnLookup" onclick="lookupStudent()">🔍 ค้นหาข้อมูล</button>
+
+      <div id="confirmBox" style="display:none;margin-top:18px;">
+        <div class="rules" style="background:rgba(18,184,134,.1);border-color:rgba(18,184,134,.4);">
+          <h4 style="color:#0e7a5f;">✓ พบข้อมูลนักเรียน — กรุณาตรวจสอบ</h4>
+          <div style="font-family:'Kanit';font-size:16px;line-height:1.9;color:#1e3346;padding:4px 2px;">
+            <div>เลขประจำตัว: <b id="cf-sid">—</b></div>
+            <div>ชื่อ–นามสกุล: <b id="cf-name">—</b></div>
+            <div>ห้อง: <b id="cf-room">—</b> &nbsp; เลขที่: <b id="cf-no">—</b></div>
+          </div>
+        </div>
+        <div style="font-family:'Kanit';font-size:14px;color:#8a6400;margin:8px 2px 12px;">⚠ ถ้าข้อมูลไม่ถูกต้อง กด "ค้นหาใหม่" แล้วตรวจเลขประจำตัวอีกครั้ง</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-sun" style="flex:1;" onclick="resetLookup()">↻ ค้นหาใหม่</button>
+          <button class="btn btn-primary" style="flex:2;" onclick="startQuiz()">✓ ยืนยันและเริ่มทำแบบทดสอบ</button>
+        </div>
+      </div>
+
+      <div class="rules">
+        <h4>⏱ กติกาการทำแบบทดสอบ</h4>
+        <ul>
+          <li>ข้อความรู้ข้อละ <b>30 วินาที</b> · ข้อวิเคราะห์ <b>45 วินาที</b> · ข้อคำนวณ <b>60 วินาที</b></li>
+          <li>เหลือ <b>10 วินาที</b> ตัวนับเปลี่ยนเป็น<b style="color:#8a6400">สีเหลือง</b> · เหลือ <b>5 วินาที</b> เปลี่ยนเป็น<b style="color:#E8654A">สีแดง</b> พร้อมเสียงและการสั่น</li>
+          <li>หมดเวลาจะไปข้อถัดไปอัตโนมัติ <b>ย้อนกลับไม่ได้</b></li>
+          <li>ทำซ้ำได้ แต่คะแนนที่ใช้คิดคือ <b>ค่าเฉลี่ยของครั้งที่ 1 และ 2</b> เท่านั้น</li>
+          <li>📵 <b>ระบบตรวจจับการออกจากหน้าแบบทดสอบ</b> — ครั้งแรกจะได้รับคำเตือน ครั้งถัดไประบบจะ<b>ส่งคำตอบอัตโนมัติ</b> และบันทึกจำนวนครั้งให้ครูทราบ</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footnote">ระบบจะบันทึกคะแนนอัตโนมัติเมื่อทำครบทุกข้อ</div>
+  </div>
+
+  <!-- STEP 2 ทำข้อสอบ -->
+  <div class="step" id="step-quiz">
+    <div class="panel no-select">
+      <div class="topbar">
+        <div class="who">👤 <b id="disp-name">—</b><br>ห้อง <b id="disp-room">—</b> เลขที่ <b id="disp-no">—</b></div>
+        <div class="qcount"><span id="disp-cur">1</span> / <span id="disp-tot">10</span></div>
+      </div>
+      <div class="prog" id="prog"></div>
+      <div class="guard-warn" id="guardWarn"></div>
+      <div class="timer" id="timerBox">
+        <div class="timer-ring">
+          <svg viewBox="0 0 46 46" width="46" height="46">
+            <circle class="tr-bg" cx="23" cy="23" r="19"></circle>
+            <circle class="tr-fg" id="trFg" cx="23" cy="23" r="19"></circle>
+          </svg>
+          <span class="timer-num" id="timerNum">30</span>
+        </div>
+        <div class="timer-txt">
+          <span class="timer-label" id="timerLabel">เวลาที่เหลือ</span>
+          <span class="timer-sub" id="timerSub">หมดเวลาจะไปข้อถัดไปอัตโนมัติ</span>
+        </div>
+        <button class="sound-btn" id="sndBtn" onclick="toggleSound()">🔊 เสียง</button>
+      </div>
+      <div class="q-num" id="qNum">ข้อ 1</div>
+      <div class="q-text" id="qText"></div>
+      <div id="qFig"></div>
+      <div class="opts" id="qOpts"></div>
+      <div class="nav"><button class="btn btn-primary" id="btnNextQ" onclick="lockAndNext()">ข้อถัดไป →</button></div>
+    </div>
+  </div>
+
+  <!-- STEP 3 ผลลัพธ์ -->
+  <div class="step" id="step-result">
+    <div class="panel">
+      <div class="result">
+        <div class="of">คะแนนของนักเรียน</div>
+        <div class="big"><span id="rScore">0</span> / <span id="rTot">10</span></div>
+        <div class="msg" id="rMsg"></div>
+        <div class="sm" id="rSm"></div>
+        <div class="auto-note" id="autoNote"></div>
+        <div class="breakdown">
+          <div class="bd"><div class="n" id="bdTheory">0/0</div><div class="l">ความรู้ / วิเคราะห์</div></div>
+          <div class="bd"><div class="n" id="bdCalc">0/0</div><div class="l">คำนวณ</div></div>
+          <div class="bd"><div class="n" id="bdSkip">0</div><div class="l">ไม่ทันตอบ</div></div>
+        </div>
+        <div class="save-status saving" id="saveStatus"><span class="spinner"></span> กำลังบันทึกคะแนนลงระบบ...</div>
+        <button class="rev-btn" id="revBtn" onclick="toggleReview()">📖 ดูเฉลยรายข้อ</button>
+        <div class="rev-box" id="revBox"></div>
+      </div>
+    </div>
+    <div class="footnote" id="resultFoot">โปรดรออย่าเพิ่งปิดหน้านี้จนกว่าจะบันทึกสำเร็จ</div>
+  </div>
+</div>
+
+<script>
+/* ================= ตั้งค่า ================= */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxAfJhv4PzX5eTS9tuD9gujM1I0S3gYcVcA7czZ1sWCCWGaYB1LziDPYFbHLUzlEMHJ/exec";
+const QUIZ_CODE = "wave-phase";          /* ต้องตรงกับ CHAPTER_OF ใน Process.gs */
+const CHAPTER   = "คลื่น";
+
+/* ================= รูปประกอบ (สร้างจากสมการจริงใน gen.py) ================= */
+const FIGS = /*__FIGS__*/{};
+
+/* ================= คลังคำถาม =================
+   cat 1 ความรู้ (30 วิ) · cat 2 วิเคราะห์ (45 วิ) · cat 3 คำนวณง่าย (60 วิ)
+   a = index เฉลย · fix = ห้ามสลับตัวเลือก (ตัวเลขเรียงน้อยไปมาก / ป้ายในรูป)        */
+const QUIZ_BANK = /*__BANK__*/[];
+
+/* แผนการสุ่ม: 3 + 3 + 4 = 10 ข้อ (ข้อคำนวณเป็นระดับง่ายทั้งหมด) */
+const PICK_PLAN = {1:3, 2:3, 3:4};
+
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+/* สลับตัวเลือกของข้อที่ไม่ได้ fix แล้วคำนวณ index เฉลยใหม่ — เก็บ object ใหม่ทั้งก้อน */
+function withShuffledOptions(Q){
+  if(Q.fix) return Object.assign({},Q);
+  const order=shuffle([0,1,2,3]);
+  return Object.assign({},Q,{o:order.map(i=>Q.o[i]), a:order.indexOf(Q.a)});
+}
+/* สร้างชุดข้อสอบ: ครบทุกหมวดตามแผน แล้วสับลำดับรวม (เก็บ object ทั้งก้อน ไม่อ้าง index คลัง) */
+function buildActiveQuiz(){
+  let picked=[];
+  Object.keys(PICK_PLAN).forEach(cat=>{
+    const pool=QUIZ_BANK.filter(q=>q.cat==cat);
+    picked=picked.concat(shuffle(pool).slice(0,PICK_PLAN[cat]).map(withShuffledOptions));
+  });
+  return shuffle(picked);
+}
+let activeQuiz=[];
+
+/* ================= สถานะ ================= */
+let student={sid:'',room:'',no:'',name:''};
+let studentVerified=false, deviceFP='';
+let answers=[], cur=0, submitted=false, autoReason='';
+let timerId=null, timeLeft=0, curTotal=0, lastBeepAt=-1;
+let soundOn=true, audioCtx=null;
+const RING=2*Math.PI*19;
+
+/* ================= เสียง ================= */
+function initAudio(){ if(audioCtx)return; try{ const AC=window.AudioContext||window.webkitAudioContext; if(AC)audioCtx=new AC(); }catch(e){audioCtx=null;} }
+function beep(freq,dur,vol){
+  if(!soundOn||!audioCtx)return;
+  try{
+    if(audioCtx.state==='suspended')audioCtx.resume();
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type='sine'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0,audioCtx.currentTime);
+    g.gain.linearRampToValueAtTime(vol,audioCtx.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+    o.connect(g);g.connect(audioCtx.destination); o.start();o.stop(audioCtx.currentTime+dur+0.02);
+  }catch(e){}
+}
+function vibrate(p){ if(!soundOn)return; try{ if(navigator.vibrate)navigator.vibrate(p); }catch(e){} }
+function toggleSound(){
+  soundOn=!soundOn;
+  const b=document.getElementById('sndBtn');
+  b.textContent=soundOn?'🔊 เสียง':'🔇 ปิดเสียง'; b.classList.toggle('off',!soundOn);
+  if(soundOn){initAudio();beep(880,0.08,0.15);}
+}
+
+/* ================= นำทาง ================= */
+function showStep(id){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setErr(id,on){document.getElementById(id).classList.toggle('err',on);}
+
+/* ================= ลายนิ้วมืออุปกรณ์ (แบบย่อ — PDPA §12) ================= */
+function makeDeviceFP(){
+  try{
+    const ua=navigator.userAgent||'';
+    let plat=/Android/i.test(ua)?'Android':/iPhone|iPad|iPod/i.test(ua)?'iOS':/Windows/i.test(ua)?'Windows':/Mac/i.test(ua)?'Mac':/Linux/i.test(ua)?'Linux':'other';
+    let br=/Edg\//i.test(ua)?'Edge':/Chrome\//i.test(ua)?'Chrome':/Firefox\//i.test(ua)?'Firefox':(/Safari\//i.test(ua)&&!/Chrome/i.test(ua))?'Safari':'other';
+    const scr=(screen.width||0)+'x'+(screen.height||0);
+    const tz=(Intl&&Intl.DateTimeFormat)?(Intl.DateTimeFormat().resolvedOptions().timeZone||''):'';
+    return plat+'/'+br+' '+scr+' '+tz;
+  }catch(e){ return 'unknown'; }
+}
+
+/* ================= เรียก GAS พร้อม timeout ================= */
+function postJSON(payload,ms){
+  const ctl=(typeof AbortController!=='undefined')?new AbortController():null;
+  const t=setTimeout(()=>{ if(ctl)ctl.abort(); },ms||20000);
+  return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+                        body:JSON.stringify(payload),signal:ctl?ctl.signal:undefined})
+    .then(r=>{ clearTimeout(t); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .catch(e=>{ clearTimeout(t); throw e; });
+}
+
+/* ================= ค้นหานักเรียน ================= */
+function lookupStudent(){
+  const sid=document.getElementById('in-sid').value.trim();
+  const bad=!/^\d{4,5}$/.test(sid);
+  setErr('f-sid',bad); if(bad) return;
+  const btn=document.getElementById('btnLookup');
+  btn.disabled=true; btn.textContent='⏳ กำลังค้นหา...';
+  const msgEl=document.querySelector('#f-sid .msg');
+  postJSON({action:'lookup',sid:sid,quiz:QUIZ_CODE},20000)
+  .then(res=>{
+    btn.disabled=false; btn.textContent='🔍 ค้นหาข้อมูล';
+    if(res.status==='closed'){
+      setErr('f-sid',true);
+      let m=res.message||'ยังไม่เปิดให้ทำแบบทดสอบ';
+      if(res.opensAt) m+=' (เปิด '+res.opensAt+')';
+      if(res.closedAt) m+=' (ปิดเมื่อ '+res.closedAt+')';
+      msgEl.textContent=m; return;
+    }
+    if(res.status==='found'){
+      student={sid:res.sid,room:res.room,no:res.no,name:res.name}; studentVerified=true;
+      document.getElementById('cf-sid').textContent=res.sid;
+      document.getElementById('cf-name').textContent=res.name;
+      document.getElementById('cf-room').textContent=res.room;
+      document.getElementById('cf-no').textContent=res.no;
+      document.getElementById('confirmBox').style.display='block';
+      document.getElementById('in-sid').disabled=true; btn.style.display='none';
+    }else if(res.status==='notfound'){
+      setErr('f-sid',true); msgEl.textContent='ไม่พบเลขประจำตัวนี้ กรุณาตรวจสอบอีกครั้ง';
+    }else{
+      setErr('f-sid',true); msgEl.textContent='เกิดข้อผิดพลาด กรุณาลองใหม่ หรือแจ้งคุณครู';
+    }
+  })
+  .catch(()=>{
+    btn.disabled=false; btn.textContent='🔍 ค้นหาข้อมูล';
+    setErr('f-sid',true); msgEl.textContent='เชื่อมต่อไม่สำเร็จ กรุณาลองใหม่';
+  });
+}
+function resetLookup(){
+  studentVerified=false; student={sid:'',room:'',no:'',name:''};
+  document.getElementById('confirmBox').style.display='none';
+  const inp=document.getElementById('in-sid'); inp.disabled=false; inp.value=''; inp.focus();
+  setErr('f-sid',false); document.querySelector('#f-sid .msg').textContent='กรุณากรอกเลขประจำตัว 5 หลัก';
+  const btn=document.getElementById('btnLookup'); btn.style.display=''; btn.disabled=false; btn.textContent='🔍 ค้นหาข้อมูล';
+}
+
+/* ================= ระบบป้องกันการทุจริต (§25.1) =================
+   visibilitychange อย่างเดียว (ห้าม blur/focus — สัญญาณลวงบนมือถือ)
+   นับเมื่อออกจากหน้า ≥ 1.5 วิ · ผ่อนผัน 2 วิแรก · ครั้งที่ 1 เตือน · ครั้งที่ 2 ส่งอัตโนมัติ   */
+const MAX_SWITCH=2, AWAY_MIN_MS=1500, GRACE_MS=2000;
+let awayAt=0, awayMs=0, switchCount=0, startedAt=0, guardOn=false;
+function onLeave(){ if(guardOn&&!submitted) awayAt=Date.now(); }
+function onReturn(){
+  if(!guardOn||submitted||!awayAt) return;
+  const dur=Date.now()-awayAt; awayAt=0;
+  if(dur<AWAY_MIN_MS) return;
+  if(Date.now()-startedAt<GRACE_MS) return;
+  switchCount++; awayMs+=dur;
+  if(switchCount>=MAX_SWITCH){ autoSubmit('ระบบส่งคำตอบอัตโนมัติ เพราะออกจากหน้าแบบทดสอบเกินกำหนด'); }
+  else{
+    const w=document.getElementById('guardWarn');
+    w.innerHTML='⚠ ตรวจพบการออกจากหน้าแบบทดสอบ ('+Math.round(dur/1000)+' วินาที)<br><b>ครั้งต่อไประบบจะส่งคำตอบอัตโนมัติทันที</b>';
+    w.classList.add('show'); vibrate([200,80,200]); beep(440,0.25,0.2);
+  }
+}
+document.addEventListener('visibilitychange',()=>{ document.hidden?onLeave():onReturn(); });
+/* มาตรการเสริมระหว่างทำ: บล็อกคลิกขวา คัดลอก และคีย์ลัดเครื่องมือนักพัฒนา */
+function inQuiz(){ return guardOn&&!submitted; }
+['contextmenu','copy','cut','paste'].forEach(ev=>document.addEventListener(ev,e=>{ if(inQuiz()) e.preventDefault(); }));
+document.addEventListener('keydown',e=>{
+  if(!inQuiz()) return;
+  const k=(e.key||'').toUpperCase();
+  if(k==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(k))||(e.ctrlKey&&['U','C','S','P'].includes(k))) e.preventDefault();
+});
+function guardText(){
+  return switchCount>0? ('สลับหน้าจอ '+switchCount+' ครั้ง ('+Math.round(awayMs/1000)+' วิ)') : 'ไม่สลับหน้าจอ';
+}
+function autoSubmit(reason){
+  if(submitted) return;
+  autoReason=reason; stopTimer(); submitQuiz();
+}
+
+/* ================= เริ่มทำ ================= */
+function startQuiz(){
+  if(!studentVerified) return;
+  deviceFP=makeDeviceFP();
+  document.getElementById('disp-name').textContent=student.name;
+  document.getElementById('disp-room').textContent=student.room;
+  document.getElementById('disp-no').textContent=student.no;
+  initAudio();
+  activeQuiz=buildActiveQuiz();
+  answers=new Array(activeQuiz.length).fill(null);
+  document.getElementById('disp-tot').textContent=activeQuiz.length;
+  document.getElementById('rTot').textContent=activeQuiz.length;
+  cur=0; submitted=false; autoReason='';
+  SUBMIT_ID=''; saveBusy=false; saveDone=false;          /* ทำใหม่ = submitId ใหม่ */
+  switchCount=0; awayMs=0; awayAt=0; startedAt=Date.now(); guardOn=true;
+  document.getElementById('guardWarn').classList.remove('show');
+  buildProg(); loadQ(); showStep('step-quiz');
+}
+
+/* ================= แสดงคำถาม ================= */
+function figHTML(key){
+  if(!key||!FIGS[key]) return '';
+  return '<div class="q-fig">'+FIGS[key]+'<div class="cap">'+(FIGS['cap'+key.slice(1)]||'')+'</div></div>';
+}
+function buildProg(){
+  const p=document.getElementById('prog'); p.innerHTML='';
+  activeQuiz.forEach(()=>{ const d=document.createElement('div'); d.className='pdot'; p.appendChild(d); });
+}
+function updProg(){
+  [...document.getElementById('prog').children].forEach((d,i)=>{
+    d.className='pdot'+(answers[i]!==null?' answered':(i===cur?' cur':''));
+  });
+}
+function loadQ(){
+  const item=activeQuiz[cur];
+  document.getElementById('disp-cur').textContent=cur+1;
+  document.getElementById('qNum').innerHTML='ข้อ '+(cur+1)+(item.calc?' <span class="tag-calc">ข้อคำนวณ</span>':'');
+  document.getElementById('qText').textContent=item.q;
+  document.getElementById('qFig').innerHTML=figHTML(item.fig);
+  const box=document.getElementById('qOpts'); box.innerHTML='';
+  item.o.forEach((txt,idx)=>{
+    const el=document.createElement('div');
+    el.className='opt'+(answers[cur]===idx?' sel':'');
+    el.innerHTML='<span class="k">'+String.fromCharCode(65+idx)+'</span><span></span>';
+    el.lastChild.textContent=txt;
+    el.onclick=()=>{ answers[cur]=idx; markSelected(idx); updProg(); };   /* ไม่ reset เวลา */
+    box.appendChild(el);
+  });
+  document.getElementById('btnNextQ').textContent=(cur===activeQuiz.length-1)?'ส่งคำตอบ ✓':'ข้อถัดไป →';
+  updProg(); startTimer(item.t||30);
+}
+function markSelected(idx){ [...document.getElementById('qOpts').children].forEach((el,i)=>el.classList.toggle('sel',i===idx)); }
+
+/* ================= ตัวจับเวลา 3 ระดับ ================= */
+function startTimer(seconds){
+  clearInterval(timerId);
+  curTotal=seconds; timeLeft=seconds; lastBeepAt=-1;
+  document.getElementById('trFg').style.strokeDasharray=RING;
+  paintTimer();
+  timerId=setInterval(()=>{
+    timeLeft--;
+    if(timeLeft<=0){ clearInterval(timerId); timeLeft=0; paintTimer(); vibrate([250,80,250]); beep(330,0.35,0.22); advance(); return; }
+    paintTimer();
+  },1000);
+}
+function paintTimer(){
+  const box=document.getElementById('timerBox'), label=document.getElementById('timerLabel'), sub=document.getElementById('timerSub');
+  document.getElementById('timerNum').textContent=Math.max(0,timeLeft);
+  document.getElementById('trFg').style.strokeDashoffset=RING*(1-Math.max(0,timeLeft)/curTotal);
+  box.classList.remove('warn','danger');
+  if(timeLeft<=5){ box.classList.add('danger'); label.textContent='ใกล้หมดเวลาแล้ว!'; sub.textContent='รีบเลือกคำตอบ'; }
+  else if(timeLeft<=10){ box.classList.add('warn'); label.textContent='เหลือเวลาอีกไม่มาก'; sub.textContent='เตรียมเลือกคำตอบ'; }
+  else{ label.textContent='เวลาที่เหลือ'; sub.textContent='หมดเวลาจะไปข้อถัดไปอัตโนมัติ'; }
+  if(timeLeft!==lastBeepAt){
+    lastBeepAt=timeLeft;
+    if(timeLeft===10){ beep(660,0.14,0.16); vibrate(90); }
+    else if(timeLeft<=5&&timeLeft>0){ beep(950,0.11,0.2); vibrate(140); }
+  }
+}
+function stopTimer(){ clearInterval(timerId); }
+function advance(){ if(submitted) return; if(cur>=activeQuiz.length-1){ finishQuiz(); return; } cur++; loadQ(); }
+function lockAndNext(){ stopTimer(); advance(); }
+function finishQuiz(){ stopTimer(); submitQuiz(); }
+
+/* ================= ตรวจและแสดงผล ================= */
+function calcScore(){ let s=0; answers.forEach((a,i)=>{ if(a===activeQuiz[i].a) s++; }); return s; }
+function submitQuiz(){
+  if(submitted) return;
+  submitted=true; guardOn=false; stopTimer();
+  const score=calcScore();
+  let th=0,ca=0,skip=0,thT=0,caT=0;
+  activeQuiz.forEach((Q,i)=>{
+    if(Q.calc)caT++; else thT++;
+    if(answers[i]===null)skip++;
+    if(answers[i]===Q.a){ Q.calc?ca++:th++; }
+  });
+  document.getElementById('rScore').textContent=score;
+  document.getElementById('bdTheory').textContent=th+'/'+thT;
+  document.getElementById('bdCalc').textContent=ca+'/'+caT;
+  document.getElementById('bdSkip').textContent=skip;
+  let msg,sm; const pct=score/activeQuiz.length;
+  if(pct>=0.9){ msg='ยอดเยี่ยมมาก! 🌟'; sm='เชื่อมโยงระยะทาง เวลา และความต่างเฟสได้อย่างแม่นยำ'; }
+  else if(pct>=0.7){ msg='เก่งมาก! 👍'; sm='เข้าใจภาพรวมได้ดี ทบทวนข้อที่พลาดอีกนิด'; }
+  else if(pct>=0.5){ msg='ผ่านเกณฑ์ 💪'; sm='ทบทวนความสัมพันธ์ Δφ/360° = Δx/λ = Δt/T อีกครั้ง'; }
+  else{ msg='สู้ต่อไป! 📚'; sm='แนะนำให้กลับไปทบทวนหัวข้อ 9.2.2 และแบบจำลองวงกลมเฟส'; }
+  document.getElementById('rMsg').textContent=msg;
+  document.getElementById('rSm').textContent=sm;
+  const an=document.getElementById('autoNote');
+  if(autoReason){ an.textContent='⚠ '+autoReason; an.style.display='block'; } else an.style.display='none';
+  buildReview();
+  showStep('step-result');
+  beep(880,0.2,0.2); setTimeout(()=>beep(1170,0.3,0.2),180);
+  saveScore(score);
+}
+
+/* ================= เฉลยรายข้อ ================= */
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function buildReview(){
+  let h='<div class="rev-title">เฉลยรายข้อ</div>';
+  activeQuiz.forEach((Q,i)=>{
+    const a=answers[i];
+    const tag= a===null? '<span class="tag none">ไม่ทันตอบ</span>' : (a===Q.a? '<span class="tag good">ตอบถูก</span>' : '<span class="tag bad">ตอบผิด</span>');
+    h+='<div class="rev-item"><div class="rq">'+tag+'ข้อ '+(i+1)+'. '+esc(Q.q)+'</div>'+figHTML(Q.fig)+
+       (a!==null&&a!==Q.a? '<div class="ra">คำตอบของนักเรียน: <b style="color:#a03418">'+String.fromCharCode(65+a)+'. '+esc(Q.o[a])+'</b></div>' : '')+
+       '<div class="ra">คำตอบที่ถูก: <b style="color:#0a7a54">'+String.fromCharCode(65+Q.a)+'. '+esc(Q.o[Q.a])+'</b></div>'+
+       '<div class="re">'+esc(Q.e)+'</div></div>';
+  });
+  document.getElementById('revBox').innerHTML=h;
+}
+function toggleReview(){
+  const b=document.getElementById('revBox'), on=b.classList.toggle('show');
+  document.getElementById('revBtn').textContent= on? '▲ ซ่อนเฉลย' : '📖 ดูเฉลยรายข้อ';
+}
+
+/* ================= บันทึกแบบกันซ้ำ (§25.2) =================
+   submitId เดียวต่อการทำหนึ่งครั้ง · timeout 20 วิ · retry 1 ครั้งด้วยรหัสเดิม
+   ถ้ายังไม่สำเร็จ → ปุ่ม "ตรวจสอบสถานะการบันทึก" (ไม่ใช่ปุ่มส่งซ้ำ)              */
+let SUBMIT_ID='', saveBusy=false, saveDone=false, lastScore=0;
+function newSubmitId(){ return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8); }
+function savePayload(score){
+  return {action:'save', sid:student.sid, room:student.room, no:student.no, name:student.name,
+          quiz:QUIZ_CODE, score:score, chapter:CHAPTER, device:deviceFP+' · '+guardText(), submitId:SUBMIT_ID};
+}
+function setSave(cls,html,foot){
+  const st=document.getElementById('saveStatus'); st.className='save-status '+cls; st.innerHTML=html;
+  if(foot!=null) document.getElementById('resultFoot').textContent=foot;
+}
+function saveScore(score){
+  if(saveDone||saveBusy) return;
+  if(!SUBMIT_ID) SUBMIT_ID=newSubmitId();
+  lastScore=score; saveBusy=true;
+  setSave('saving','<span class="spinner"></span> กำลังบันทึกคะแนนลงระบบ...','โปรดรออย่าเพิ่งปิดหน้านี้จนกว่าจะบันทึกสำเร็จ');
+  const payload=savePayload(score);
+  postJSON(payload,20000).then(onSaveOK)
+  .catch(()=>{
+    setSave('saving','<span class="spinner"></span> เชื่อมต่อช้า กำลังลองบันทึกอีกครั้ง...');
+    return postJSON(payload,20000).then(onSaveOK);
+  })
+  .catch(()=>{ saveBusy=false; showVerifyButton(); });
+}
+function onSaveOK(res){
+  if(!res||res.status!=='success') throw new Error((res&&res.message)||'unknown');
+  saveBusy=false; saveDone=true;
+  const att=res.attempt||1;
+  if(att===1) setSave('saved','✓ บันทึกคะแนนสำเร็จแล้ว <span style="font-size:13px">(ครั้งที่ 1)</span>','บันทึกเรียบร้อย นักเรียนสามารถปิดหน้านี้ได้');
+  else if(att===2) setSave('saved','✓ บันทึกคะแนนสำเร็จแล้ว <span style="font-size:13px">(ครั้งที่ 2)</span>','คะแนนที่ใช้จะเป็นค่าเฉลี่ยของครั้งที่ 1 และ 2');
+  else setSave('saved','✓ บันทึกแล้ว <span style="font-size:13px">(ครั้งที่ '+att+')</span>','หมายเหตุ: คะแนนที่ใช้คิดคือค่าเฉลี่ยของครั้งที่ 1 และ 2 เท่านั้น');
+}
+function showVerifyButton(){
+  setSave('failed','⚠ ยังยืนยันการบันทึกไม่ได้ (อินเทอร์เน็ตอาจช้า)<br>'+
+    '<button class="btn btn-sun" style="margin-top:10px;width:auto;padding:10px 20px;font-size:15px" onclick="verifySave()">🔎 ตรวจสอบสถานะการบันทึก</button>',
+    'คะแนนอาจบันทึกแล้ว — กดตรวจสอบสถานะก่อน อย่าทำแบบทดสอบใหม่เพียงเพราะข้อความนี้');
+}
+function verifySave(){
+  if(saveDone||saveBusy) return;
+  saveBusy=true;
+  setSave('saving','<span class="spinner"></span> กำลังตรวจสอบสถานะการบันทึก...');
+  postJSON({action:'verify', submitId:SUBMIT_ID, sid:student.sid, quiz:QUIZ_CODE},20000)
+  .then(r=>{
+    saveBusy=false;
+    if(r.status==='found'){ onSaveOK({status:'success',attempt:r.attempt||1}); return; }
+    /* ยืนยันแล้วว่ายังไม่มีในชีต → ส่งด้วย submitId เดิม (ไม่เกิดแถวซ้ำแม้ส่งถึงหลายครั้ง) */
+    saveScore(lastScore);
+  })
+  .catch(()=>{ saveBusy=false;
+    setSave('failed','⚠ ยังเชื่อมต่อระบบไม่ได้<br><span style="font-size:13px">แจ้งคุณครูพร้อมคะแนน <b>'+lastScore+'</b> และรหัสส่ง <b>'+SUBMIT_ID+'</b></span>'+
+      '<button class="btn btn-sun" style="margin-top:10px;width:auto;padding:10px 20px;font-size:15px" onclick="verifySave()">🔎 ตรวจสอบอีกครั้ง</button>');
+  });
+}
+
+/* กันปิดหน้าโดยไม่ตั้งใจระหว่างทำ */
+window.addEventListener('beforeunload',e=>{
+  if(document.getElementById('step-quiz').classList.contains('active')&&!submitted){ e.preventDefault(); e.returnValue=''; }
+});
+document.getElementById('bankN').textContent=QUIZ_BANK.length;
+</script>
+</body>
+</html>

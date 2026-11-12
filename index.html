@@ -94,6 +94,21 @@ section.block{padding:clamp(28px,5vw,56px) 0;}
 .card.c10 .go{background:#2A1F5C;} .card.c10:hover .go{background:#4B3A9A;}
 .card.c11 .go{background:#0F4747;} .card.c11:hover .go{background:#17706A;}
 
+/* ---------------- Quizzes ---------------- */
+.quizzes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;}
+.quiz{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:18px;text-decoration:none;color:#fff;
+  background:linear-gradient(135deg,#123A63,#0B1F3A);box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;}
+.quiz:hover,.quiz:focus-visible{transform:translateY(-3px);box-shadow:0 2px 4px rgba(11,31,58,.06),0 18px 36px -14px rgba(11,31,58,.45);}
+.quiz:focus-visible{outline:3px solid var(--sun);outline-offset:3px;}
+.qic{flex:0 0 auto;width:56px;height:56px;border-radius:14px;background:rgba(127,216,232,.1);border:1px solid rgba(127,216,232,.25);display:grid;place-items:center;}
+.qic svg{width:40px;height:40px;}
+.qbody{display:flex;flex-direction:column;min-width:0;flex:1;}
+.qtag{font-family:'Kanit',sans-serif;font-weight:500;font-size:.82rem;color:var(--foam);}
+.qtitle{font-family:'Prompt',sans-serif;font-weight:700;font-size:1.15rem;line-height:1.3;}
+.qmeta{font-size:.9rem;color:#B9CCDD;line-height:1.4;margin-top:2px;}
+.qgo{flex:0 0 auto;font-family:'Kanit',sans-serif;font-weight:600;font-size:.95rem;color:var(--deep);background:var(--sun);padding:.45em .9em;border-radius:999px;}
+@media (max-width:420px){ .qgo{display:none;} }
+
 /* ---------------- Tips ---------------- */
 .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;}
 .tip{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;display:flex;gap:14px;align-items:flex-start;}
@@ -199,6 +214,26 @@ footer b{color:#fff;font-family:'Kanit',sans-serif;font-weight:600;}
           </div>
         </a>
 
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="quizzes" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>แบบทดสอบออนไลน์</h2>
+        <p>ยืนยันตัวตนด้วยเลขประจำตัวนักเรียน 5 หลัก · ระบบบันทึกคะแนนอัตโนมัติ</p>
+      </div>
+      <div class="quizzes">
+        <a class="quiz" href="ch09-waves/quiz-wave-phase.html">
+          <span class="qic" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke-linecap="round"><circle cx="15" cy="24" r="10" stroke="#7FD8E8" stroke-width="2.5"/><path d="M15 24 L25 24" stroke="#F4B740" stroke-width="2.5"/><path d="M15 24 L15 14" stroke="#E8654A" stroke-width="2.5"/><path d="M30 24 Q34 12 38 24 T46 24" stroke="#7FD8E8" stroke-width="2.5"/></svg></span>
+          <span class="qbody">
+            <span class="qtag">บทที่ 9 · หัวข้อ 9.2.2</span>
+            <span class="qtitle">ระยะทาง เวลา และความต่างเฟส</span>
+            <span class="qmeta">สุ่ม 10 ข้อจากคลัง 26 ข้อ · ความรู้ วิเคราะห์ และคำนวณพื้นฐาน</span>
+          </span>
+          <span class="qgo">เริ่มทำ →</span>
+        </a>
       </div>
     </div>
   </section>
